@@ -7,9 +7,16 @@
         <h1 id="naglowek">Cześć!</h1>
         <p>Klikaj przyciski i zobacz, co się stanie!</p>
         <button id="kolor">Zmień kolor tła</button>
+        <button id="nowy">Dodaj nowy napis na stronę</button>
+        <div id="miejsce_na_napis"></div>
         <script>
             document.getElementById("kolor").onclick = function() {
                 document.body.style.backgroundColor = "lightblue";
+            }
+            document.getElementById("nowy").onclick = function(){
+                let p = document.createElement("p");
+                p.textContent = "Nowy napis na naszej stronie";
+                document.getElementById("miejsce").appendChild(p);
             }
         </script>
     </body>
