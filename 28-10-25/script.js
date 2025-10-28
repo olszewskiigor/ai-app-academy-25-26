@@ -18,3 +18,21 @@ function startStoper(){
         }, 1000); // 1000 milisekund = 1 sekunda
     }
 }
+
+// Funkcja, która zatrzymuje stoper
+function stopStoper(){
+    // Zatrzymujemy stoper, jeśli działa
+    clearInterval(timer);
+    // Ustawiamy timer z powrotem na null (czyli "pusty")
+    timer = null;
+}
+
+// Funckja, która reseuje (czyści) stoper
+function resetStoper(){
+    // Najpierw zatrzymujemy licznik, jeśli działa
+    stopStoper();
+    // Ustawiamy licznik sekund z powrotem na 0
+    sekund = 0;
+    // Zmieniamy tekst na stronie na 0
+    document.getElementById("czas").textContent = sekund;
+}
