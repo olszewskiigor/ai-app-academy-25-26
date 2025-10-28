@@ -36,3 +36,12 @@ function resetStoper(){
     // Zmieniamy tekst na stronie na 0
     document.getElementById("czas").textContent = sekund;
 }
+
+// Tutaj "nasłuchujemy" kliknięcia przycisku START
+document.getElementById("start").addEventListener("click", startStoper);
+
+// Tutaj "nasłuchujemy" kliknięcia przycisku STOP
+document.getElementById("stop").addEventListener("click", stopStoper);
+
+// Tutaj "nasłuchujemy" kliknięcia przycisku RESET
+document.getElementById("reset").addEventListener("click", resetStoper);
