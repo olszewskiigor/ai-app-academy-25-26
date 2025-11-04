@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reverse Your Words — Simple HTML/JS App</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;}
+    body{max-width:900px;margin:40px auto;padding:20px;background:#fbfbfb;border-radius:12px;box-shadow:0 6px 24px rgba(27,31,35,.06)}
+    h1{font-size:1.4rem;margin:0 0 8px}
+    p.lead{color:#444;margin-top:0}
+    label{display:block;margin-top:14px;font-weight:600}
+    textarea{width:100%;min-height:120px;padding:12px;border-radius:8px;border:1px solid #ddd;font-size:1rem;resize:vertical}
+    .row{display:flex;gap:8px;margin-top:12px}
+    button{padding:8px 12px;border-radius:8px;border:0;background:#0366d6;color:white;cursor:pointer;font-weight:600}
+    button.secondary{background:#6c757d}
+    .result{white-space:pre-wrap;margin-top:14px;padding:12px;border-radius:8px;border:1px dashed #cbd5e0;background:#fff}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .option{display:flex;align-items:center;gap:6px}
+    small{display:block;color:#666;margin-top:6px}
+    footer{margin-top:18px;color:#666;font-size:0.9rem}
+  </style>
+</head>
+<body>
+  <h1>Reverse Your Words — HTML + JavaScript</h1>
+  <p class="lead">Type or paste text below and choose how you'd like it reversed.</p>
+
+  <label for="inputText">Input text</label>
+  <textarea id="inputText" placeholder="Type something like: Hello world"></textarea>
+
+  <div class="controls">
+    <div class="option">
+      <input type="radio" id="modeChars" name="mode" value="chars" checked>
+      <label for="modeChars">Reverse characters (full string)</label>
+    </div>
+    <div class="option">
+      <input type="radio" id="modeWordsOrder" name="mode" value="wordsOrder">
+      <label for="modeWordsOrder">Reverse word order</label>
+    </div>
+    <div class="option">
+      <input type="radio" id="modeEachWord" name="mode" value="eachWord">
+      <label for="modeEachWord">Reverse characters inside each word</label>
+    </div>
+  </div>
+
+  <div class="row">
+    <button id="goBtn">Reverse</button>
+    <button id="liveBtn" class="secondary">Toggle live preview</button>
+    <button id="copyBtn" class="secondary">Copy result</button>
+    <button id="clearBtn" class="secondary">Clear</button>
+  </div>
+
+  <label for="result">Result</label>
+  <div id="result" class="result" aria-live="polite">(result will appear here)</div>
+  <small>Note: "Reverse characters" flips the whole string end-to-end. "Reverse word order" keeps characters in each word but flips the order of words. "Reverse characters inside each word" keeps word order but flips letters in every word.</small>
+
+  <footer>Made with plain HTML, CSS and JavaScript — copy this file and open it in your browser.</footer>
+
+  <script>
+    const input = document.getElementById('inputText')
+    const result = document.getElementById('result')
+    const goBtn = document.getElementById('goBtn')
+    const copyBtn = document.getElementById('copyBtn')
+    const clearBtn = document.getElementById('clearBtn')
+    const liveBtn = document.getElementById('liveBtn')
+
+    let live = false
+
+    function getMode() {
+      return document.querySelector('input[name="mode"]:checked').value
+    }
+
+    function reverseChars(s){
+      // Reverse the whole string (keeps spaces exactly as they appear, just reversed)
+      return Array.from(s).reverse().join('')
+    }
+
+    function reverseWordOrder(s){
+      // Split on whitespace groups to keep punctuation attached to words; filter preserves empty strings if needed
+      // We'll normalize spaces: split by spaces and then join with a single space
+      const words = s.split(/\s+/).filter(Boolean)
+      return words.reverse().join(' ')
+    }
+
+    function reverseEachWord(s){
+      // Reverse characters inside each word but keep order of words and original spacing-ish: we'll collapse multiple spaces to single
+      const words = s.split(/\s+/).filter(Boolean)
+      return words.map(w => Array.from(w).reverse().join('')).join(' ')
+    }
+
+    function compute(){
+      const text = input.value
+      if (!text) {
+        result.textContent = '(result will appear here)'
+        return
+      }
+      const mode = getMode()
+      let out = ''
+      if (mode === 'chars') out = reverseChars(text)
+      else if (mode === 'wordsOrder') out = reverseWordOrder(text)
+      else if (mode === 'eachWord') out = reverseEachWord(text)
+      result.textContent = out
+    }
+
+    goBtn.addEventListener('click', compute)
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(result.textContent)
+        copyBtn.textContent = 'Copied!'
+        setTimeout(()=> copyBtn.textContent = 'Copy result', 1200)
+      } catch (e) {
+        copyBtn.textContent = 'Copy failed'
+        setTimeout(()=> copyBtn.textContent = 'Copy result', 1200)
+      }
+    })
+
+    clearBtn.addEventListener('click', ()=>{
+      input.value = ''
+      result.textContent = '(result will appear here)'
+    })
+
+    liveBtn.addEventListener('click', ()=>{
+      live = !live
+      liveBtn.textContent = live ? 'Live: ON' : 'Toggle live preview'
+      if (live) compute()
+    })
+
+    // Live compute on input when live mode is on
+    input.addEventListener('input', ()=>{
+      if (live) compute()
+    })
+
+    // Allow pressing Ctrl+Enter to run
+    input.addEventListener('keydown', (e)=>{
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') compute()
+    })
+
+    // Initialize
+    result.textContent = '(result will appear here)'
+  </script>
+</body>
+</html>
